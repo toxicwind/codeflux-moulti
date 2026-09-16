@@ -105,6 +105,11 @@ def diff_run(args: dict) -> None:
 	from .diff import diff_run as real_diff_run # pylint: disable=import-outside-toplevel
 	real_diff_run(args)
 
+def stream(args: dict) -> None:
+	from .streaming import stream as real_stream # pylint: disable=import-outside-toplevel
+	real_stream(args)
+
+
 def add_main_commands(subparsers: _SubParsersAction) -> None:
 	# moulti init
 	init_parser = subparsers.add_parser('init', help='start a new Moulti instance')
@@ -123,6 +128,12 @@ def add_main_commands(subparsers: _SubParsersAction) -> None:
 	wait_parser.add_argument('--verbose', '-v', action='store_true', help='if True, output the reason why each connection attempt failed')
 	wait_parser.add_argument('--delay', '-d', type=pint, default=500, help='number of milliseconds between two connection attempts')
 	wait_parser.add_argument('--max-attempts', '-m', type=pint, default=0, help='maximum number of attempts before giving up; 0 means "never give up"')
+
+	# moulti stream (codeflux improvement: ingest JSONL patch events from stdin)
+	stream_parser = subparsers.add_parser('stream', help='ingest JSONL patch events from stdin into steps')
+	stream_parser.set_defaults(func=stream)
+	stream_parser.add_argument('--dry-run', action='store_true', default=False, help='print the moulti commands instead of executing them')
+
 
 	# moulti set
 	set_parser = subparsers.add_parser('set', help='set Moulti options')
